@@ -1,0 +1,4 @@
+name = Example Statehandler Plugin
+description = An example plugin for Statehandler
+dependencies[] = statehandler
+core = 7.x
