@@ -2,12 +2,13 @@
  * @file
  * Defines an example plugin for the statehandler.
  */
+
 (function ($) {
   Drupal.behaviors.exampleStateHandlerPlugin = {
     attach: function (context, settings) {
 
       // add the plugin to the stateHandler js object, aliasing it to "plugin" for simplicity here...
-      var plugin = settings.stateHandler.plugins['exampleStateHandlerPlugin'] = new stateHandlerPlugin();
+      var plugin = settings.stateHandler.plugins['exampleStateHandlerPlugin'] = new StateHandlerPlugin();
 
       /**
        * plugin.processState will be the guts of your plugin.
@@ -18,30 +19,31 @@
        */
       plugin.processState = function(State) {
         // Initial page loads will not contain data, so dont do anything.
-        if(JSON.stringify(State) == "{}")
-        {
+        if(JSON.stringify(State) == "{}") {
           return;
         }
+
         /**
-         * You'll probably want to do some ajax stuff in here, and render it to
-         *  the screen, but we'll just stringify it for now and display it in 
-         * main content as an example.
+         * You'll probably want to do some ajax stuff in here, and render it in 
+         * a specific/classy manner, but we'll just stringify it for now and 
+         * display it in main content as an example.
          */ 
-        $('#block-system-main .content').fadeOut(function(){
+        $('#block-system-main .content').fadeOut(function() {
           $(this).html("<p>" +JSON.stringify(State) + "<p>").fadeIn();
         });
       };
 
       /**
        * plugin.buildState will build a state object from a URL. Other plugins 
-       * may (will) access State before it is passed to History.
-       *  @param url: a url to build a FULL state object from.
-       *  @param state: A State object
-       *  @return State: a modified (extended) State Object witht he data you need
+       * may (will) access State before it is passed to History. Order of
+       * operations is dictated by plugin weight.
+       *  @param url: a url to derive a State object from.
+       *  @param state: A State object that has been extended by other plugins.
+       *  @return State: a modified State object with the data you need.
        */
       plugin.buildState = function(State, url) {
         var State = State || {};
-        // Tack on what you need to, and return the state when you're done.
+        // Tack on what you need to, and return the State when you're done.
 
         State.exampleData = url;
         State.randomData = Math.ceil( Math.random() * 1000 );
@@ -51,11 +53,14 @@
       }
       
       /**
-       * plugin.buildTitle builds a title from a state object.
-       * This will update the page title in the browser.
-       * for our example we return the randomData we set in buildState.
+       * plugin.buildTitle builds (optionally overrides) a title from a state.
+       * This will be used to update the page title in the browser.
+       * For our example we return the randomData we set in buildState.
+       * Order of operations is dictated by plugin weight.
+       * Return null if your plugin shouldn't modify the title, alternatively,
+       * use the default implementation of the Class by deleting this method assignment.
        *  @param State: a State object
-       *  @return Title: a string to be sent to the title
+       *  @return Title: a string to be appended to the title for the state
        */
       plugin.buildTitle = function(State) {
         return "Random: " + State.randomData.toString();
@@ -63,13 +68,13 @@
       
       
       /**
-       * BEGIN TRIGGERS
+       * BEGIN jQuery EVENTS
        * Application State Triggers:
        * Set up your click handlers here... you may be interested in .live().
        * For our example, we will trigger state changes by links in the header
        */
  
-      $("#header a").click(function(){
+      $("#header a").click(function() {
         /*
          * this implementation creates a random URL for demonstration purposes
          */
@@ -85,11 +90,8 @@
         return false;
       });
 
-
-
-
       /**
-       * END TRIGGERS
+       * END jQuery EVENTS
        */
     }
   };

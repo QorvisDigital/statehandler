@@ -7,15 +7,14 @@
  * Defines the stateHandlerPlugin Class.
  * See method and example stateHandler plugin comments for explanation.
  */
-function stateHandlerPlugin() {
+function StateHandlerPlugin() {
 
   /**
    * plugin.buildState will build a state object from a URL. Other plugins 
    * may (will) access State before it is passed to History. This function
    * defines and extends the Application state data stored in history.
-   *  @param url: a url to build a FULL state object from.
-   *  @param state: A State object
    *  @return State: a modified (extended) State Object witht he data you need
+   *  @param url: a url to build a FULL state object from.
    */
   this.buildState = function(State, url) {
     return State;
