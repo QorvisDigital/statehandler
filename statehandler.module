@@ -13,18 +13,24 @@
  */
 function statehandler_library() {
   $libraries = array();
-  $jspath = drupal_get_path('module', 'statehandler') . '/js/statehandler.js';
+  $jspath = drupal_get_path('module', 'statehandler') . '/js/';
 
   $libraries['statehandler'] = array(
-    'title' => "Statehandler",
+    'title' => 'Statehandler',
     //'website' => 'https://github.com/balupton/History.js/',
-    'version' => '7,x-1.x',
-    'js' => array($jspath => array(
-      'dependencies' => array(
-        // require the history.js library from history_js
-        array('history_js', 'history.js')
-      )
-    ))
+    'version' => '7.x-1.x',
+    'js' => array($jspath . 'statehandler.js' => array()),
+    'dependencies' => array(
+      // require the history.js library from history_js
+      array('history_js', 'history.js'),
+      array('statehandler', 'statehandler.class')
+    )
+  );
+
+  $libraries['statehandler.class'] = array(
+    'title' => 'StateHandler Class',
+    'version' => '7.x-1.x',
+    'js' => array($jspath . 'statehandler.class.js' => array())
   );
 
   return $libraries;
@@ -34,7 +40,7 @@ function statehandler_library() {
  * Implements hook_init().
  */
 function statehandler_init() {
-  drupal_add_library('statehandler', 'statehandler');
+  //drupal_add_library('statehandler', 'statehandler', TRUE);
   $implementation = variable_get('history_js_implementation', 'jquery');
   drupal_add_js(array('stateHandler' => array('history_js_implementation' => $implementation, 'plugins' => array())), 'setting');
 }

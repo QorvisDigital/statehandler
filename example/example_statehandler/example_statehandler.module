@@ -18,11 +18,10 @@ function example_statehandler_library() {
   $libraries['example_statehandler'] = array(
     'title' => "Example Statehandler",
     'version' => '7,x-1.x',
-    'js' => array($jspath => array(
-      'dependencies' => array(
-        array('statehandler' => 'statehandler')
-      )
-    ))
+    'js' => array($jspath => array()),
+    'dependencies' => array(
+        array('statehandler', 'statehandler'),
+    )
   );
 
   return $libraries;
@@ -32,5 +31,5 @@ function example_statehandler_library() {
  * Implements hook_init();
  */
 function example_statehandler_init() {
-  drupal_add_library('example_statehandler', 'example_statehandler');
+  drupal_add_library('example_statehandler', 'example_statehandler', TRUE);
 }
