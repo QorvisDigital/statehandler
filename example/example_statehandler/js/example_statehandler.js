@@ -10,6 +10,13 @@
       // add the plugin to the stateHandler js object, aliasing it to "plugin" for simplicity here...
       var plugin = settings.stateHandler.plugins['exampleStateHandlerPlugin'] = new StateHandlerPlugin();
 
+      /* Add // at the beginning of this line to enable a second plugin example
+      var plugin2 = settings.stateHandler.plugins['two'] = new StateHandlerPlugin();
+      plugin2.weight =-99; // Set the weight... lower is executed first
+      plugin2.buildState = function(State){var State = State || {}; State.lol = 1; return State};
+      plugin2.buildTitle = function(State){return "| Plugin 2: lol"};
+      //*/
+
       /**
        * plugin.processState will be the guts of your plugin.
        * This will define what to do with the state data that is sent to it.
@@ -63,7 +70,7 @@
        *  @return Title: a string to be appended to the title for the state
        */
       plugin.buildTitle = function(State) {
-        return "Random: " + State.randomData.toString();
+        return "| Example Plugin: " + State.randomData.toString();
       }
       
       

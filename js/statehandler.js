@@ -14,15 +14,6 @@
       var plugins = settings.stateHandler.plugins || [],
       pluginsSorted = [];
 
-      for(plugin in plugins) {
-        pluginsSorted.push(plugins[plugin]);
-      }
-
-      // Sort the plugins for execution based on weight
-      pluginsSorted.sort(function(a, b) {
-        return (a.weight > b.weight) - (a.weight < b.weight);
-      });
-
       // attach the history object to Drupal
       settings.stateHandler.History = window.History;
 
@@ -46,6 +37,17 @@
       settings.stateHandler.pushState = function(url, title) {
         var State = {};
         title = title || "";
+        pluginsSorted = [];
+        
+        // Resort the plugins in case weights have changed.
+        for(plugin in plugins) {
+          pluginsSorted.push(plugins[plugin]);
+        }
+  
+        // Sort the plugins for execution based on weight
+        pluginsSorted.sort(function(a, b) {
+          return (a.weight > b.weight) - (a.weight < b.weight);
+        });
 
         for(plugin in pluginsSorted)
         {
