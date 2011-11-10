@@ -12,7 +12,7 @@
       settings.stateHandler = settings.stateHandler || {plugins: [] };
       var plugins = settings.stateHandler.plugins || [],
       pluginsSorted = [];
-      
+
       for(plugin in plugins) {
         pluginsSorted.push(plugins[plugin]);
       }
@@ -21,20 +21,20 @@
       pluginsSorted.sort(function(a, b) {
         return (a.weight > b.weight) - (a.weight < b.weight);
       });
-      
+
       // attach the history object to Drupal
       settings.stateHandler.History = window.History;
 
       // Trigger all the plugins! (Trigger all the things!)
       settings.stateHandler.triggerChange = function() {
           var State = settings.stateHandler.History.getState();
-          
+
           // fire the state object to the plugins implementing a listener
           for (plugin in pluginsSorted ) {
             pluginsSorted[plugin].processState(State.data);
           }
       };
-      
+
       /**
        * This function will invoke application state changes.
        * You should bind all interactions to trigger this function using
@@ -45,12 +45,12 @@
       settings.stateHandler.pushState = function(url, title) {
         var State = {};
         title = title || "";
-        
+
         for(plugin in pluginsSorted)
         {
           // Extend the state object with data from all the plugins, then fire stateChange
           $.extend(State, pluginsSorted[plugin].buildState(State, url));
-          
+
           // Tack on title info from each plugin, or not depending...
           var pluginTitle = pluginsSorted[plugin].buildTitle(State, url);
           title = pluginTitle == null? title : title + " " + pluginTitle;
@@ -64,7 +64,7 @@
         case 'jquery':
           $(window).bind('statechange', settings.stateHandler.triggerChange);
           break;
-      
+
         case 'native':
           settings.stateHandler.History.Adapter.bind(window, 'statechange', settings.stateHandler.triggerChange);
           break;
