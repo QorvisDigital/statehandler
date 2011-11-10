@@ -5,15 +5,14 @@
 (function ($) {
   Drupal.behaviors.exampleStateHandlerPlugin = {
     attach: function (context, settings) {
-      settings.stateHandler = settings.stateHandler || {plugins:{} };
 
-      // add the plugin to the stateHandler js object
-      var plugin = settings.stateHandler.plugins.examplePlugin = {};
-      
+      // add the plugin to the stateHandler js object, aliasing it to "plugin" for simplicity here...
+      var plugin = settings.stateHandler.plugins['exampleStateHandlerPlugin'] = new stateHandlerPlugin();
+
       /**
        * plugin.processState will be the guts of your plugin.
        * This will define what to do with the state data that is sent to it.
-       * This will be envoked on back + forward and direct access/refresh.
+       * This will be invoked on back + forward and direct access/refresh.
        *  @param State: a fully built state object for your application to use 
        *    (automatically populated by History.js).
        */
@@ -23,50 +22,45 @@
         {
           return;
         }
-        // You'll probably want to do some ajax stuff in here, and render it to the screen, but we'll just stringify it for now
+        /**
+         * You'll probably want to do some ajax stuff in here, and render it to
+         *  the screen, but we'll just stringify it for now and display it in 
+         * main content as an example.
+         */ 
         $('#block-system-main .content').fadeOut(function(){
           $(this).html("<p>" +JSON.stringify(State) + "<p>").fadeIn();
         });
       };
 
       /**
-       * plugin.buildState will build a state object from a URL.
+       * plugin.buildState will build a state object from a URL. Other plugins 
+       * may (will) access State before it is passed to History.
        *  @param url: a url to build a FULL state object from.
+       *  @param state: A State object
+       *  @return State: a modified (extended) State Object witht he data you need
        */
-      plugin.buildState = function(url) {
-        var State = {};
+      plugin.buildState = function(State, url) {
+        var State = State || {};
+        // Tack on what you need to, and return the state when you're done.
+
         State.exampleData = url;
-        State.randomData = Math.random() * 1000; 
+        State.randomData = Math.ceil( Math.random() * 1000 );
+
+        // Pass off the extended/modified state object to other plugins for processing.
         return State;
       }
       
       /**
        * plugin.buildTitle builds a title from a state object.
        * This will update the page title in the browser.
-       * for our example we assume title will not be changed.
+       * for our example we return the randomData we set in buildState.
        *  @param State: a State object
+       *  @return Title: a string to be sent to the title
        */
       plugin.buildTitle = function(State) {
-        return null;
+        return "Random: " + State.randomData.toString();
       }
       
-      /**
-       * This function will invoke application state changes.
-       * You should bind all interactions to trigger this function using
-       * well-formed drupal paths.
-       *  @param url: the url of the state
-       */
-      plugin.pushState = function(url) {
-        var State = plugin.buildState(url);
-        var title = plugin.buildTitle(State);
-        
-        /**
-         * Define these arguments above, and call pushState with them.
-         * For this function, Do not modify past this line.
-         * Invokes History.js pushState to save a state to history.
-         */
-        Drupal.settings.stateHandler.History.pushState(State, title, url);
-      }
       
       /**
        * BEGIN TRIGGERS
@@ -74,17 +68,20 @@
        * Set up your click handlers here... you may be interested in .live().
        * For our example, we will trigger state changes by links in the header
        */
-
-
+ 
       $("#header a").click(function(){
-        // read in a property to push to the application... this should be based on a real URL
-        
-        var url = $(this).attr('href') + Math.ceil(Math.random() * 10);
-        // uncomment the next line to see how it really SHOULD be used.
+        /*
+         * this implementation creates a random URL for demonstration purposes
+         */
+        var url = $(this).attr('href') + Math.ceil(Math.random() * 100),
+        title = $(this).attr('title');
+        /**
+         * Important: all click handlers must call settings.stateHandler.pushState,
+         * and return false if the matched element is a link (it should be).
+         * uncomment the next line to see how it really SHOULD be used.
+         */
         // url = $(this).attr('href'));
-        
-        // Important: all click handlers must call plugin.pushState, and return false
-        plugin.pushState(url);
+        settings.stateHandler.pushState(url, title);
         return false;
       });
 
