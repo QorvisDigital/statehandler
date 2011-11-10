@@ -40,7 +40,7 @@ function statehandler_library() {
  * Implements hook_init().
  */
 function statehandler_init() {
-  //drupal_add_library('statehandler', 'statehandler', TRUE);
+  // Add settings to js so stateHandler knows how to interface with History.js.
   $implementation = variable_get('history_js_implementation', 'jquery');
   drupal_add_js(array('stateHandler' => array('history_js_implementation' => $implementation, 'plugins' => array())), 'setting');
 }
