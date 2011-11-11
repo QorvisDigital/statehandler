@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Implements the drupal hooks required for example_statehandler.
+ */
+
+/**
+ * Implements hook_library().
+ *
+ * @return
+ *  A libraries array for example_statehandler_plugins
+ */
+function example_statehandler_plugins_library() {
+  $libraries = array();
+
+  // Set the path to the plugins.
+  $jspath = drupal_get_path('module', 'example_statehandler_plugins') . '/js/';
+
+  // Add the example plugin.
+  $libraries['statehandler.example'] = array(
+    'title' => "Exmaple StateHandler Plugin",
+    'version' => '7,x-1.x',
+    'js' => array($jspath . 'statehandler.example.js' => array()),
+    'dependencies' => array(
+        array('statehandler', 'statehandler'),
+    )
+  );
+  
+  // Add another plugin.
+  $libraries['statehandler.another'] = array(
+    'title' => 'Another Example StateHandler Plugin',
+    'version' => '7-x.1.x',
+    'js' => array($jspath . 'statehandler.another.js' => array()),
+    'dependencies' => array(
+        array('statehandler', 'statehandler'),
+    )
+  );
+
+  return $libraries;
+}
+
+/**
+ * Implements hook_init();
+ */
+function example_statehandler_plugins_init() {
+  // Add the libraries you want.
+  drupal_add_library('example_statehandler_plugins', 'statehandler.example', TRUE);
+  drupal_add_library('example_statehandler_plugins', 'statehandler.another', TRUE);
+}

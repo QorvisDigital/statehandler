@@ -10,27 +10,32 @@
 (function ($) {
   Drupal.behaviors.stateHandler = {
     attach: function (context, settings) {
+      // Initialize the stateHandler settings object.
       settings.stateHandler = settings.stateHandler || {plugins: [] };
+      settings.stateHandler.base = document.location.protocol + "//" + document.location.host;
+
+      // Attach the history object to Drupal.
+      settings.stateHandler.History = window.History;
+
+      // Alias plugins for readability, and create a non-keyed array to sort.
       var plugins = settings.stateHandler.plugins || [],
       pluginsSorted = [];
 
-      // attach the history object to Drupal
-      settings.stateHandler.History = window.History;
-
-      // Trigger all the plugins! (Trigger all the things!)
+      // Define pushState listener - Trigger all the plugins!
       settings.stateHandler.triggerChange = function() {
-          var State = settings.stateHandler.History.getState();
+          var State = settings.stateHandler.History.getState(),
+          url = State.url.replace(settings.stateHandler.base, "");
 
           // fire the state object to the plugins implementing a listener
           for (plugin in pluginsSorted ) {
-            pluginsSorted[plugin].processState(State.data);
+            pluginsSorted[plugin].processState(State.data, url);
           }
       };
 
       /**
        * This function will invoke application state changes.
        * You should bind all interactions to trigger this function using
-       * well-formed drupal paths.
+       * well-formed drupal paths for SEO and profit.
        *  @param url: the url of the state
        *  @param title: the title to "start with"
        */
@@ -38,8 +43,8 @@
         var State = {};
         title = title || "";
         pluginsSorted = [];
-        
-        // Resort the plugins in case weights have changed.
+
+        // Resort the plugins in case weights have changed in realtime.
         for(plugin in plugins) {
           pluginsSorted.push(plugins[plugin]);
         }
@@ -49,16 +54,17 @@
           return (a.weight > b.weight) - (a.weight < b.weight);
         });
 
+        // Execute the plugins buildState and buildTite methods in order.
         for(plugin in pluginsSorted)
         {
-          // Extend the state object with data from all the plugins, then fire stateChange
+          // Extend the state object with data from buildState.
           $.extend(State, pluginsSorted[plugin].buildState(State, url));
 
-          // Tack on title info from each plugin, or not depending...
+          // Tack on title info from each plugin from buildTitle.
           var pluginTitle = pluginsSorted[plugin].buildTitle(State, url);
           title = pluginTitle == null? title : title + " " + pluginTitle;
         }
-        // trigger the application stateChange after all plugins have been executed
+        // Push the data to History for storage.
         Drupal.settings.stateHandler.History.pushState(State, title, url);
       };
 

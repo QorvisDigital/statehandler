@@ -1,9 +1,14 @@
  
  /**
  * @file Defines the stateHandlerPlugin Class.
- * See method and example stateHandler plugin comments for explanation.
+ * See method and example StateHandler plugin comments for explanation.
  */
 function StateHandlerPlugin() {
+
+  /**
+   * plugin.weight will be used to execute plugin hooks in a specific order.
+   */
+  this.weight = 0;
 
   /**
    * plugin.buildState will build a state object from a URL. Other plugins 
@@ -34,14 +39,12 @@ function StateHandlerPlugin() {
    * This will be invoked on back + forward and direct access/refresh. All 
    * animations and ajax calls should live here.
    *  @param State: a fully built state object for your application to use 
+   *  @param url: the path of the current application state, useful for
+   *    determining if your plugin should act on this state.
    *    (automatically populated by History.js).
    */
-  this.processState = function(State) {
+  this.processState = function(State, url) {
     // Do something special... probably ajaxy.
   };
 
-  /**
-   * plugin.weight will be used to execute plugin hooks in a specific order.
-   */
-  this.weight = 0;
 };

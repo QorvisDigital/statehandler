@@ -1,5 +1,5 @@
-name = Statehandler
-description = Enables an interface to History.js for application State Handling
+name = StateHandler
+description = Enables an interface to History.js for application State Handling.
 dependencies[] = history_js
 core = 7.x
 version = 7-x.1.x

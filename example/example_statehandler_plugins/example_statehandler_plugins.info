@@ -1,0 +1,4 @@
+name = Example StateHandler Plugins
+description = Defines some example plugins for StateHandler.
+dependencies[] = statehandler
+core = 7.x
